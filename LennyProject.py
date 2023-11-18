@@ -10,7 +10,6 @@ get_completion = pipeline("image-to-text", model="Salesforce/blip-image-captioni
 
 def captioner(image):
     try:
-        return "None", None
         result = get_completion(image)
         caption = result[0]["generated_text"]
 
