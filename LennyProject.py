@@ -27,7 +27,7 @@ def captioner(image):
 
 def main():
     st.title("Image Captioning and Audio Playing App")
-    uploaded_image = st.camera_input("")
+    uploaded_image = st.camera_input("Upload an image")
 
     if uploaded_image is not None:
 
