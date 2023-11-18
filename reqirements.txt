@@ -1,0 +1,6 @@
+streamlit
+gtts
+transformers
+base64
+tensorflow
+pil
