@@ -3,7 +3,6 @@ from gtts import gTTS
 from PIL import Image
 from transformers import pipeline
 import base64
-import io
 
 # Return caption and audiopath
 get_completion = pipeline("image-to-text", model="Salesforce/blip-image-captioning-base")
@@ -16,16 +15,14 @@ def captioner(image):
         # Use gTTS for text-to-speech
         tts = gTTS(caption, lang="en")
 
-        # Save the audio to an in-memory stream
-        audio_stream = io.BytesIO()
-        tts.save(audio_stream)
-        audio_stream.seek(0)
+        # Save the audio to an MP3 file
+        audio_path = "output.mp3"
+        tts.save(audio_path)
 
-        return caption, audio_stream
-
+        return caption, audio_path
     except Exception as e:
         # Log the exception to identify the issue
-        st.error(f"Error: {e}")
+        print(f"Error: {e}")
         return "Error", None
 
 def main():
@@ -33,21 +30,19 @@ def main():
     uploaded_image = st.camera_input("Take a photo")
 
     if uploaded_image is not None:
-        try:
-            image = Image.open(uploaded_image)
-            caption, audio_stream = captioner(image)
+
+            caption, audio = captioner(Image.open(uploaded_image))
             # Perform image captioning
             st.write("Image Caption:", caption)
 
             # Play audio associated with the image
-            audio = audio_stream.read()
+            audio = open("output.mp3", "rb").read()
 
-            # Use st.audio to play the audio
-            st.audio(audio, format="audio/mp3", start_time=0)
-
-        except Exception as e:
-            # Log the exception to identify the issue
-            st.error(f"An error occurred: {e}")
+            # Use st.markdown to embed HTML5 audio with autoplay
+            st.markdown(
+                f'<audio controls autoplay><source src="data:audio/mp3;base64,{base64.b64encode(audio).decode()}" type="audio/mp3"></audio>',
+                unsafe_allow_html=True,
+            )
 
 if __name__ == "__main__":
     main()
