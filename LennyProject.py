@@ -22,6 +22,7 @@ def captioner(image):
         audio_stream.seek(0)
 
         return caption, audio_stream
+
     except Exception as e:
         # Log the exception to identify the issue
         st.error(f"Error: {e}")
@@ -29,16 +30,20 @@ def captioner(image):
 
 def main():
     st.title("Image Captioning and Audio Playing App")
-    uploaded_image = st.camera_input("Upload an image")
+    uploaded_image = st.camera_input("Take a photo")
 
     if uploaded_image is not None:
         try:
-            caption, audio_stream = captioner(uploaded_image)
+            image = Image.open(uploaded_image)
+            caption, audio_stream = captioner(image)
             # Perform image captioning
             st.write("Image Caption:", caption)
 
             # Play audio associated with the image
-            st.audio(audio_stream, format="audio/mp3", start_time=0)
+            audio = audio_stream.read()
+
+            # Use st.audio to play the audio
+            st.audio(audio, format="audio/mp3", start_time=0)
 
         except Exception as e:
             # Log the exception to identify the issue
